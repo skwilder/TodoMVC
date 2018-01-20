@@ -24,7 +24,7 @@ export default class TodoItem extends React.Component {
 						checked={todo.completed}
 						onChange={this.handleToggle}
 					/>
-					<label onDoubleClick={this.handleEdit}>
+					<label onDoubleClick={this.handleEdit} onClick={this.handleAddTag}>
 						{todo.title}
 					</label>
 					<button className="destroy" onClick={this.handleDestroy} />
@@ -33,7 +33,6 @@ export default class TodoItem extends React.Component {
 					ref="editField"
 					className="edit"
 					value={this.editText}
-					onBlur={this.handleSubmit}
 					onChange={this.handleChange}
 					onKeyDown={this.handleKeyDown}
 				/>
@@ -41,15 +40,26 @@ export default class TodoItem extends React.Component {
 		);
 	}
 
+	// TODO : onBlur={this.handleSubmit} Removed, figure out if it was needed...
+
 	handleSubmit = (event) => {
+		console.log(this.props.todo);
 		const val = this.editText.trim();
-		if (val) {
+
+		if (this.props.viewStore.todoAddingTags) {
+			console.log('Adding logic to add the tags');
+			// TODO : Add the ability to add multiple tags
+			this.props.todo.tags = val.split(',');
+		} else if (val) {
+			console.log('Still calling adding a title');
 			this.props.todo.setTitle(val);
 			this.editText = val;
 		} else {
 			this.handleDestroy();
 		}
+
 		this.props.viewStore.todoBeingEdited = null;
+		this.props.viewStore.todoAddingTags = false;
 	};
 
 	handleDestroy = () => {
@@ -79,6 +89,19 @@ export default class TodoItem extends React.Component {
 	handleToggle = () => {
 		this.props.todo.toggle();
 	};
+
+	handleAddTag = (event) => {
+		if (event.altKey) {
+			console.log('Adding tags');
+			
+			const todo = this.props.todo;
+
+			this.props.viewStore.todoBeingEdited = todo;
+			this.props.viewStore.todoAddingTags = true;
+
+			this.editText = 'Add new tags (comma separated).';
+		}
+	}
 }
 
 TodoItem.propTypes = {

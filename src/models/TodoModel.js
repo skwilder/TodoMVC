@@ -3,6 +3,7 @@ import {observable} from 'mobx';
 export default class TodoModel {
 	store;
 	id;
+	@observable tags;
 	@observable title;
 	@observable completed;
 
@@ -11,6 +12,7 @@ export default class TodoModel {
 		this.id = id;
 		this.title = title;
 		this.completed = completed;
+		this.tags = [];
 	}
 
 	toggle() {
@@ -29,7 +31,8 @@ export default class TodoModel {
 		return {
 			id: this.id,
 			title: this.title,
-			completed: this.completed
+			completed: this.completed,
+			tags: this.tags
 		};
 	}
 
