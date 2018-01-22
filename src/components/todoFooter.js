@@ -4,10 +4,15 @@ import {observer} from 'mobx-react';
 import {pluralize} from '../utils';
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS } from '../constants';
 
+import * as Utils from '../utils';
+import TodoTag from './todoTag';
+
 @observer
 export default class TodoFooter extends React.Component {
 	render() {
 		const todoStore = this.props.todoStore;
+		const viewStore = this.props.viewStore;
+	
 		if (!todoStore.activeTodoCount && !todoStore.completedCount)
 			return null;
 
@@ -22,6 +27,13 @@ export default class TodoFooter extends React.Component {
 					{this.renderFilterLink(ALL_TODOS, "", "All")}
 					{this.renderFilterLink(ACTIVE_TODOS, "active", "Active")}
 					{this.renderFilterLink(COMPLETED_TODOS, "completed", "Completed")}
+					{todoStore.getTodosTag().map(tag =>
+						(<TodoTag 
+							tag={tag}
+							key={Utils.uuid()}
+							viewStore={viewStore}
+						/>)
+					)}
 				</ul>
 				{ todoStore.completedCount === 0
 					? null

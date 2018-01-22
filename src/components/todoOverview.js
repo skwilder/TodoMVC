@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
-import { ACTIVE_TODOS, COMPLETED_TODOS } from '../constants';
+import { ACTIVE_TODOS, COMPLETED_TODOS, ALL_TODOS } from '../constants';
 
 import TodoItem from './todoItem';
 
@@ -31,8 +31,21 @@ export default class TodoOverview extends React.Component {
 	}
 
 	getVisibleTodos() {
-		return this.props.todoStore.todos.filter(todo => {
-			switch (this.props.viewStore.todoFilter) {
+		var todoFilter = this.props.viewStore.todoFilter;
+
+		return this.props.todoStore.todos.filter(todo => {	
+
+			if (todoFilter === ALL_TODOS) return true;
+			
+			if (todoFilter !== ACTIVE_TODOS || todoFilter !== COMPLETED_TODOS) {
+				if (todo.tags === undefined) {
+					return false;
+				} else {
+					return todo.tags.includes(todoFilter);
+				}
+			}
+
+			switch (todoFilter) {
 				case ACTIVE_TODOS:
 					return !todo.completed;
 				case COMPLETED_TODOS:

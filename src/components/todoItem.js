@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
 import {observable, expr} from 'mobx';
+import { TASKS_LABEL } from '../constants';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
@@ -43,15 +44,14 @@ export default class TodoItem extends React.Component {
 	// TODO : onBlur={this.handleSubmit} Removed, figure out if it was needed...
 
 	handleSubmit = (event) => {
-		console.log(this.props.todo);
 		const val = this.editText.trim();
 
 		if (this.props.viewStore.todoAddingTags) {
-			console.log('Adding logic to add the tags');
 			// TODO : Add the ability to add multiple tags
-			this.props.todo.tags = val.split(',');
+			if (val !== TASKS_LABEL) {
+				this.props.todo.tags = val.split(',').map(tag => tag.trim());
+			}
 		} else if (val) {
-			console.log('Still calling adding a title');
 			this.props.todo.setTitle(val);
 			this.editText = val;
 		} else {
@@ -91,15 +91,17 @@ export default class TodoItem extends React.Component {
 	};
 
 	handleAddTag = (event) => {
-		if (event.altKey) {
-			console.log('Adding tags');
-			
+		if (event.altKey) {		
 			const todo = this.props.todo;
 
 			this.props.viewStore.todoBeingEdited = todo;
 			this.props.viewStore.todoAddingTags = true;
 
-			this.editText = 'Add new tags (comma separated).';
+			if (this.props.todo.tags != null && this.props.todo.tags.length > 0) {
+				this.editText = this.props.todo.tags.join(',');
+			} else {
+				this.editText = TASKS_LABEL;	
+			}
 		}
 	}
 }

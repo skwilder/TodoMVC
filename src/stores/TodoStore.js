@@ -1,5 +1,6 @@
 import {observable, computed, reaction} from 'mobx';
 import TodoModel from '../models/TodoModel'
+import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS } from '../constants';
 import * as Utils from '../utils';
 
 
@@ -53,6 +54,11 @@ export default class TodoStore {
 
 	toJS() {
 		return this.todos.map(todo => todo.toJS());
+	}
+
+	getTodosTag() {
+		// TODO : This is gnarly, must be a better way to abstract the values from a MOBX array
+		return Array.from(new Set(this.todos.map(todo => todo.tags).join(',').split(',')));
 	}
 
 	static fromJS(array) {
